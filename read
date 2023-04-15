@@ -1,0 +1,38 @@
+springCloud-alibaba项目，
+    注意springboot版本关系，这里用的是：springboot：2.3.11.RELEASE,springcloud alibaba：2.2.5.RELEASE
+一、创建父项目，用于管理依赖
+    file -> new -> project -> maven
+二、父项目添加依赖
+    <!-- 设置打包格式-->
+    <packaging>pom</packaging>
+
+    <!-- 添加springCloud alibaba依赖-->
+    <dependencyManagement>
+        <!-- 添加 springCloud alibaba 依赖，添加该依赖后，会默认管理对应组件的依赖-->
+        <dependencies>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.2.7.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 管理 springboot 版本，把上面原来的 parent 标签内容去掉-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>2.3.12.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 添加 springCloud 依赖-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR12</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+

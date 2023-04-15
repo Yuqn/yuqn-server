@@ -1,0 +1,165 @@
+服务消费者
+一、创建子项目
+二、添加依赖
+<!-- 添加依赖-->
+    <dependencies>
+
+        <!-- 添加 springboot 依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 添加 nacos 依赖-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- 添加 feign 依赖-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- 添加 sentinel 依赖-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+
+    </dependencies>
+三、写启动类
+    @SpringBootApplication
+    @EnableDiscoveryClient
+    @EnableFeignClients
+    @Slf4j
+    public class ServerApplication {
+        public static void main(String[] args) {
+            SpringApplication.run(ServerApplication.class,args);
+            log.info("============server-consumer-demo项目启动了！=============");
+        }
+    }
+四、写配置文件
+    # 设置端口
+    server:
+      port: 8082
+    spring:
+      application:
+        name: server-consumer-demo
+      cloud:
+        # 配置nacos服务
+        nacos:
+          server-addr: localhost:8848
+          discovery:
+            username: nacos
+            password: nacos
+            namespace: public
+    # 日志设置
+    logging:
+      level:
+        # 日志级别
+        root: info
+      pattern:
+        # 日志输出格式
+        # %m为消息
+        # %n为换行
+        # %p 级别
+        # %t 为线程名 %16t 则线程名占16位
+        # %clr 是添加颜色
+        console: "%d - %m %n"
+      file:
+        # 记录日志到文件
+        name: E:\project-log-all\server-provider-demo\server.log
+      logback:
+        rollingpolicy:
+          # 日志文件大小，超过新建
+          max-file-size: 4MB
+          # 超过最大后，重新创建日志文件名称
+          file-name-pattern: E:\project-log-all\server-provider-demo\server.%d{yyyy-MM-dd}.%i.log
+五、通过feign写接口
+六、写controller
+七、集合swagger文档3.0
+    package com.yuqn.config;
+
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.beans.factory.annotation.Value;
+    import org.springframework.context.annotation.Bean;
+    import org.springframework.context.annotation.Configuration;
+    import springfox.documentation.builders.ApiInfoBuilder;
+    import springfox.documentation.builders.RequestHandlerSelectors;
+    import springfox.documentation.service.ApiInfo;
+    import springfox.documentation.service.Contact;
+    import springfox.documentation.spi.DocumentationType;
+    import springfox.documentation.spring.web.plugins.Docket;
+
+    import java.net.InetAddress;
+
+    @Configuration
+    @Slf4j
+    public class SwaggerConfig {
+
+        @Value("${server.port}")
+        private  String port = "0000";
+
+        /**
+         * @author: yuqn
+         * @Date: 2023/4/15 0:12
+         * @description:
+         * 生成 swagger 文档
+         * @param: null
+         * @return: null
+         */
+        @Bean
+        public Docket createRestApi() {
+            Docket docket = new Docket(DocumentationType.OAS_30);
+            docket.apiInfo(apiInfo())
+                    .select()
+                    .apis(RequestHandlerSelectors.basePackage("com.yuqn.controller"))
+                    .build();
+
+            log.info("|====================生成swagger文档成功=====================|");
+            log.info("|----- http://"+ getAddressAndPort() +"/swagger-ui/index.html ----|");
+            log.info("|--------------------点击上面连接跳转浏览器--------------------|");
+            log.info("|==========================================================|");
+            return docket;
+        }
+
+        /**
+         * @author: yuqn
+         * @Date: 2023/4/15 0:11
+         * @description:
+         * 获取 swagger 其他信息信息
+         * @param: null
+         * @return: null
+         */
+        private ApiInfo apiInfo() {
+            return new ApiInfoBuilder()
+                    .title("SpringBoot-Swagger集成")
+                    .description("springboot | swagger")
+                    // 作者信息
+                    .contact(new Contact("yuqn", "http://www.yuqn.xyz", "2572655497@qq.com"))
+                    .version("v-1.0.0")
+                    .build();
+        }
+        /**
+         * @author: yuqn
+         * @Date: 2023/4/15 0:12
+         * @description:
+         * 获取项目ip和端口
+         * @param: null
+         * @return: string
+         */
+        private String getAddressAndPort(){
+            String msg="";
+            try{
+                InetAddress localHost = InetAddress.getLocalHost();
+                msg = localHost.getHostAddress() + ":" + port;
+            }catch (Exception e){
+                log.error("获取ip地址出错！错入信息：" + e);
+            }
+            return msg;
+        }
+    }
+
+

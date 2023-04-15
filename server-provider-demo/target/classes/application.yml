@@ -1,0 +1,39 @@
+server:
+  # 端口配置
+  port: 8081
+
+spring:
+  application:
+    # 表示应用名称，nacos 会将该名称当做服务名称
+    name: server-provider-demo
+  cloud:
+    nacos:
+      # 表示naCos地址
+      server-addr: localhost:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: public
+
+# 日志设置
+logging:
+  level:
+    # 日志级别
+    root: info
+  pattern:
+    # 日志输出格式
+    # %m为消息
+    # %n为换行
+    # %p 级别
+    # %t 为线程名 %16t 则线程名占16位
+    # %clr 是添加颜色
+    console: "%d - %m %n"
+  file:
+    # 记录日志到文件
+    name: E:\project-log-all\server-provider-demo\server.log
+  logback:
+    rollingpolicy:
+      # 日志文件大小，超过新建
+      max-file-size: 4MB
+      # 超过最大后，重新创建日志文件名称
+      file-name-pattern: E:\project-log-all\server-provider-demo\server.%d{yyyy-MM-dd}.%i.log
